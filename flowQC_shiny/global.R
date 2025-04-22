@@ -635,6 +635,8 @@ desat <- function(col, by=50) {
     return(rgb(rgbcol[1,], rgbcol[2,], rgbcol[3,], maxColorValue=255))
 }
 
+## -----------------------------------------------------------------------------------------------------
+# SPADE clutsering functions 
 SPADE.strip.sep <- function(name) {
   ifelse(substr(name,nchar(name),nchar(name))==.Platform$file,substr(name,1,nchar(name)-1),name)
 }
