@@ -405,6 +405,8 @@ shinyServer(function(input, output, session) {
     })
     
 ###############################################################################  
+ # Compensation and transformation preprocess
+
     output$s_tlplot <- renderPlot({
         if(is.null(fstl()$timeLineData))
             return(NULL)
@@ -439,7 +441,8 @@ shinyServer(function(input, output, session) {
                        binSize = fstl()$binSize)    
     })
     ####################################################################################    
-    
+    # singlet and viability QC
+
     output$scplot <- renderPlot({
       fcsFiles <- input$fcsFiles
       fsc_Data <- read.FCS(fcsFiles$datapath, transformation=FALSE,truncate_max_range = FALSE)
@@ -462,7 +465,8 @@ shinyServer(function(input, output, session) {
     }) 
        
     ####################################################################################   
-    
+    # automatic gating analyses
+
     output$gate_type <- renderUI({
       selectInput('gate_type', 'gate type:', 
                   choices = markerNames(),selected = markerNames()[which(markerNames()=='<BUV805-A>:CD8')])
@@ -505,7 +509,8 @@ shinyServer(function(input, output, session) {
     }) 
 
     ####################################################################################   
-    
+    # clustering analyses
+
     output$clustplot1 <- renderPlot({
       DKMS_fsc_basic_qc_rm_comp_tf_singlets_live <- fsData_post_qc()
 
