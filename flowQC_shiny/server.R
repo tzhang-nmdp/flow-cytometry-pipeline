@@ -517,29 +517,33 @@ shinyServer(function(input, output, session) {
       cluster_marker_select<-which(channels() %in% channelSelect())
       if (length(cluster_marker_select) > 8)
       {
-        cluster_marker_select<-cluster_marker_select[1:8]
+        cluster_marker_select_sim<-cluster_marker_select[1:8]
       }
 
-      set.seed(0)
-      fSOM <- FlowSOM(DKMS_fsc_basic_qc_rm_comp_tf_singlets_live, 
-                      # Input options:
-                      compensate = FALSE,
-                      transform = FALSE,
-                      scale = FALSE,
-                      # SOM options:
-                      colsToUse = cluster_marker_select, xdim = length(cluster_marker_select), ydim = length(cluster_marker_select),
-                      # Metaclustering options:
-                      nClus = length(cluster_marker_select)*2)
-      PlotStars(fSOM, backgroundValues = fSOM$metaclustering)
-    })     
+set.seed(0)
+fSOM <- FlowSOM(DKMS_fsc_basic_qc_rm_comp_tf_singlets_live,
+                # Input options:
+                compensate = FALSE,
+                transform = FALSE,
+                scale = FALSE,
+                # SOM options:
+                colsToUse = cluster_marker_select_sim, xdim = length(cluster_marker_select_sim), ydim = length(cluster_marker_select_sim),
+                # Metaclustering options:
+                nClus = length(cluster_marker_select_sim)*2)
+PlotStars(fSOM, backgroundValues = fSOM$metaclustering)
+    })
     
     output$clustplot2 <- renderPlot({
+      if (length(channelSelect()) > 8)
+      {
+        cluster_marker_select_sim<-channelSelect()[1:8]
+      }
       fcsFiles <- input$fcsFiles
       fsc_Data <- read.FCS(fcsFiles$datapath, transformation=FALSE,truncate_max_range = FALSE)
       comp2<- flowCore::keyword(fsc_Data)[["$SPILLOVER"]]
       transformList <- estimateLogicle(fsc_Data, channels = colnames(comp2), m = 5.5)
       output_dir=paste('www\\', gsub(".fcs","",input$fcsFiles$name),"\\",sep="")
-      SPADE.driver(fcsFiles$datapath, out_dir=output_dir, comp = comp2,transforms = transformList)
+      SPADE.driver(fcsFiles$datapath, out_dir=output_dir, comp = TRUE,cluster_cols=cluster_marker_select_sim, transforms = transformList)
       layout <- read.table(paste(output_dir,"layout.table",sep=.Platform$file.sep))
       mst_graph <- igraph:::read.graph(paste(output_dir,"mst.gml",sep=.Platform$file.sep),format="gml")
       SPADE.plot.trees(mst_graph, output_dir, out_dir=paste(output_dir,"pdf",sep=.Platform$file.sep), layout=as.matrix(layout))
@@ -600,6 +604,3 @@ shinyServer(function(input, output, session) {
     )
     
 })
-
-
-
