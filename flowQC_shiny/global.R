@@ -19,7 +19,6 @@ require(flowCore)
 
 require(FlowSOM)
 require(spade)
-setwd("C:/Users/tzhang/Desktop/Project/Graft composition")
 
 ## initialize the score data frame for a flow set
 flowQA_firstScoreInit <- function(set, time){
